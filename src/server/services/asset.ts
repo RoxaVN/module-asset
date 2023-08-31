@@ -13,7 +13,6 @@ import { CloneAssetAttributesService } from './asset.attribute.js';
 @serverModule.injectable()
 export class CreateAssetService extends InjectDatabaseService {
   async handle(request: {
-    userId: string;
     storeId: string;
     unitId?: string;
     unitcount?: number;
@@ -30,7 +29,6 @@ export class CreateAssetService extends InjectDatabaseService {
 export class UpdateAssetService extends InjectDatabaseService {
   async handle(request: {
     assetId: string;
-    userId?: string;
     storeId?: string;
     unitcount?: number;
     metadata?: Record<string, any>;
@@ -38,7 +36,6 @@ export class UpdateAssetService extends InjectDatabaseService {
     await this.entityManager.getRepository(Asset).update(
       { id: request.assetId },
       {
-        userId: request.userId,
         storeId: request.storeId,
         unitCount: request.unitcount,
         metadata: request.metadata,
@@ -75,7 +72,6 @@ export class SplitAssetService extends BaseService {
     await this.databaseService.manager.save(asset);
 
     const newAsset = new Asset();
-    newAsset.userId = asset.userId;
     newAsset.storeId = asset.storeId;
     newAsset.unitId = asset.unitId;
     newAsset.unitCount = request.splitAmount;

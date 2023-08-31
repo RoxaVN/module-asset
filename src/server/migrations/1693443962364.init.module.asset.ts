@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitModuleAsset1690961257974 implements MigrationInterface {
-  name = 'InitModuleAsset1690961257974';
+export class InitModuleAsset1693443962364 implements MigrationInterface {
+  name = 'InitModuleAsset1693443962364';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -67,7 +67,7 @@ export class InitModuleAsset1690961257974 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE "store" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "userId" uuid NOT NULL,
+        "userId" uuid,
         "name" text NOT NULL,
         "type" text NOT NULL,
         "metadata" jsonb,
@@ -95,7 +95,6 @@ export class InitModuleAsset1690961257974 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE "asset" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "userId" uuid NOT NULL,
         "metadata" jsonb,
         "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -104,9 +103,6 @@ export class InitModuleAsset1690961257974 implements MigrationInterface {
         "unitId" bigint,
         CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id")
       )
-      `);
-    await queryRunner.query(`
-      CREATE INDEX "IDX_e469bb1b58d7ae4d9527d35ca0" ON "asset" ("userId")
       `);
     await queryRunner.query(`
       ALTER TABLE "category_attribute"
@@ -152,9 +148,6 @@ export class InitModuleAsset1690961257974 implements MigrationInterface {
       `);
     await queryRunner.query(`
       ALTER TABLE "category_attribute" DROP CONSTRAINT "FK_6ae9fd1960af2eb3b290036c1c8"
-      `);
-    await queryRunner.query(`
-      DROP INDEX "public"."IDX_e469bb1b58d7ae4d9527d35ca0"
       `);
     await queryRunner.query(`
       DROP TABLE "asset"

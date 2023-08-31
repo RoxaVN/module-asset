@@ -14,7 +14,6 @@ import { permissions, scopes } from '../access.js';
 
 const storeAssetSource = new ApiSource<{
   id: string;
-  userId: string;
   metadata?: any;
   createdDate: Date;
   updatedDate: Date;

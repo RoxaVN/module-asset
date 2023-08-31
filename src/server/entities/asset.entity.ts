@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,10 +17,6 @@ import { Unit } from './unit.entity.js';
 export class Asset {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Index()
-  @Column('uuid')
-  userId: string;
 
   @Column({ type: 'jsonb', nullable: true })
   metadata?: any;

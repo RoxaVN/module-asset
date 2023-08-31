@@ -16,8 +16,8 @@ export class Store {
   id: string;
 
   @Index()
-  @Column('uuid')
-  userId: string;
+  @Column('uuid', { nullable: true })
+  userId?: string;
 
   @Column('text')
   name: string;

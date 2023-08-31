@@ -5,7 +5,7 @@ import { Store } from '../entities/store.entity.js';
 
 @serverModule.injectable()
 export class CreateStoreService extends InjectDatabaseService {
-  async handle(request: { userId: string; name: string; type: string }) {
+  async handle(request: { userId?: string; name: string; type: string }) {
     const store = new Store();
     store.userId = request.userId;
     store.name = request.name;
