@@ -6,3 +6,4 @@ export * from './attribute.js';
 export * from './asset.attribute.js';
 export * from './category.attribute.js';
 export * from './store.asset.js';
+export * from './store.js';
