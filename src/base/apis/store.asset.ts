@@ -11,19 +11,12 @@ import {
 
 import { baseModule } from '../module.js';
 import { permissions, scopes } from '../access.js';
+import { AssetResponse } from './asset.js';
 
-const storeAssetSource = new ApiSource<{
-  id: string;
-  metadata?: any;
-  createdDate: Date;
-  updatedDate: Date;
-  storeId: string;
-  assetAttributes: Array<{
-    id: string;
-    name: string;
-    value: any;
-  }>;
-}>([scopes.Store, scopes.Asset], baseModule);
+const storeAssetSource = new ApiSource<AssetResponse>(
+  [scopes.Store, scopes.Asset],
+  baseModule
+);
 
 class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
   @MinLength(1)
