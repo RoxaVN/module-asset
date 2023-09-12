@@ -9,10 +9,8 @@ import { storeApi } from '../../base/index.js';
 export class CreateStoreService extends InjectDatabaseService {
   async handle(request: { userId?: string; name: string; type: string }) {
     const store = new Store();
-    store.userId = request.userId;
-    store.name = request.name;
-    store.type = request.type;
-    await this.entityManager.save(store);
+    Object.assign(store, request);
+    await this.entityManager.getRepository(Store).insert(store);
 
     return { id: store.id };
   }
