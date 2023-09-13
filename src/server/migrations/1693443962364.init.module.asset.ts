@@ -69,7 +69,7 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "userId" uuid,
         "name" text NOT NULL,
-        "type" text NOT NULL,
+        "type" text NOT NULL DEFAULT 'public',
         "metadata" jsonb,
         "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

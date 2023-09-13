@@ -12,6 +12,9 @@ import { Asset } from './asset.entity.js';
 
 @Entity()
 export class Store {
+  static TYPE_PUBLIC = 'public';
+  static TYPE_PRIVATE = 'private';
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,7 +25,7 @@ export class Store {
   @Column('text')
   name: string;
 
-  @Column('text')
+  @Column('text', { default: Store.TYPE_PUBLIC })
   type: string;
 
   @Column({ type: 'jsonb', nullable: true })
