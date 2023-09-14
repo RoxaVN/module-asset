@@ -23,15 +23,15 @@ export class CreateAssetAttributesService extends BaseService {
   async handle(request: {
     assetId: string;
     assetAttributes: Array<{
-      attributeId: string;
+      attributeName: string;
       value: any;
     }>;
   }) {
-    const attributeIds = request.assetAttributes.map(
-      (assetAttribute) => assetAttribute.attributeId
+    const attributeNames = request.assetAttributes.map(
+      (assetAttribute) => assetAttribute.attributeName
     );
     const attributes = await this.getAttributesService.handle({
-      ids: attributeIds,
+      names: attributeNames,
     });
 
     await this.databaseService.manager
@@ -41,12 +41,12 @@ export class CreateAssetAttributesService extends BaseService {
       .values(
         request.assetAttributes.map((assetAttribute) => {
           const attribute = attributes.find(
-            (attribute) => attribute.id === assetAttribute.attributeId
+            (attribute) => attribute.name === assetAttribute.attributeName
           ) as Attribute;
           return {
             [`value${attribute.type}`]: assetAttribute.value,
             assetId: request.assetId,
-            attributeId: assetAttribute.attributeId,
+            attributeId: attribute.id,
           };
         })
       )
