@@ -37,7 +37,7 @@ export class AssetAttribute {
   @Column({ type: 'timestamptz', nullable: true })
   valueDate?: Date;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({ type: 'int', nullable: true })
   valueInt?: number;
 
   @Column({ type: 'decimal', precision: 12, scale: 4, nullable: true })

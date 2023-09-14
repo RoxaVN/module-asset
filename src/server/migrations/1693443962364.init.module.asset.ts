@@ -57,7 +57,7 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
         "metadata" jsonb,
         "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "valueDate" TIMESTAMP WITH TIME ZONE,
-        "valueInt" bigint,
+        "valueInt" integer,
         "valueDecimal" numeric(12, 4),
         "valueText" text,
         "valueVarchar" character varying(256),
