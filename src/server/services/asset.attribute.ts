@@ -8,15 +8,15 @@ import {
 
 import { serverModule } from '../module.js';
 import { AssetAttribute, Attribute } from '../entities/index.js';
-import { GetAttributesService } from './attribute.js';
+import { GetAllAttributesService } from './attribute.js';
 import { NotFoundAttributeException } from '../../base/index.js';
 
 @serverModule.injectable()
 export class CreateAssetAttributesService extends BaseService {
   constructor(
     @inject(DatabaseService) private databaseService: DatabaseService,
-    @inject(GetAttributesService)
-    private getAttributesService: GetAttributesService
+    @inject(GetAllAttributesService)
+    private getAttributesService: GetAllAttributesService
   ) {
     super();
   }
@@ -29,7 +29,7 @@ export class CreateAssetAttributesService extends BaseService {
     }>;
   }) {
     const attributeNames = request.attributes.map((attr) => attr.name);
-    const attributes = await this.getAttributesService.handle({
+    const attributesResult = await this.getAttributesService.handle({
       names: attributeNames,
     });
 
@@ -39,7 +39,7 @@ export class CreateAssetAttributesService extends BaseService {
       .into(AssetAttribute)
       .values(
         request.attributes.map((attr) => {
-          const attribute = attributes.find(
+          const attribute = attributesResult.items.find(
             (attribute) => attribute.name === attr.name
           );
           if (!attribute) {
@@ -87,8 +87,8 @@ export class UpdateAssetAttributeService extends InjectDatabaseService {
 export class GetAssetAttributesService extends BaseService {
   constructor(
     @inject(DatabaseService) private databaseService: DatabaseService,
-    @inject(GetAttributesService)
-    private getAttributesService: GetAttributesService
+    @inject(GetAllAttributesService)
+    private getAttributesService: GetAllAttributesService
   ) {
     super();
   }
@@ -103,12 +103,12 @@ export class GetAssetAttributesService extends BaseService {
       });
 
     const attributeIds = items.map((item) => item.attributeId);
-    const attributes = await this.getAttributesService.handle({
+    const attributesResult = await this.getAttributesService.handle({
       ids: attributeIds,
     });
 
     return items.map((item) => {
-      const attribute = attributes.find(
+      const attribute = attributesResult.items.find(
         (attr) => attr.id === item.attributeId
       ) as Attribute;
       return {

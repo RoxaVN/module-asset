@@ -36,7 +36,7 @@ export class UpdateAttributeService extends InjectDatabaseService {
 }
 
 @serverModule.injectable()
-export class GetAttributesService extends InjectDatabaseService {
+export class GetAllAttributesService extends InjectDatabaseService {
   async handle(request: { ids?: string[]; names?: string[] }) {
     const items = await this.entityManager.getRepository(Attribute).find({
       where: {
@@ -44,7 +44,7 @@ export class GetAttributesService extends InjectDatabaseService {
         id: request.ids ? In(request.ids) : undefined,
       },
     });
-    return items;
+    return { items };
   }
 }
 

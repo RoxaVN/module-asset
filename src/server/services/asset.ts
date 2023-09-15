@@ -14,7 +14,7 @@ import { In } from 'typeorm';
 import { serverModule } from '../module.js';
 import { NotFoundAttributeException, assetApi } from '../../base/index.js';
 import { Asset } from '../entities/asset.entity.js';
-import { GetAttributesService } from './attribute.js';
+import { GetAllAttributesService } from './attribute.js';
 import { CloneAssetAttributesService } from './asset.attribute.js';
 
 @serverModule.injectable()
@@ -95,8 +95,8 @@ export class SplitAssetService extends BaseService {
 export class GetAssetsApiService extends BaseService {
   constructor(
     @inject(DatabaseService) private databaseService: DatabaseService,
-    @inject(GetAttributesService)
-    private getAttributesService: GetAttributesService
+    @inject(GetAllAttributesService)
+    private getAttributesService: GetAllAttributesService
   ) {
     super();
   }
@@ -106,7 +106,7 @@ export class GetAssetsApiService extends BaseService {
     const pageSize = request.pageSize || 10;
 
     const attributeNames = request.attributes.map((item) => item.name);
-    const attributes = await this.getAttributesService.handle({
+    const attributesResult = await this.getAttributesService.handle({
       names: attributeNames,
     });
 
@@ -115,7 +115,9 @@ export class GetAssetsApiService extends BaseService {
       .findAndCount({
         relations: ['assetAttributes'],
         where: request.attributes.map((item) => {
-          const attribute = attributes.find((attr) => attr.name === item.name);
+          const attribute = attributesResult.items.find(
+            (attr) => attr.name === item.name
+          );
           if (!attribute) {
             throw new NotFoundAttributeException(item.name);
           }
@@ -135,7 +137,7 @@ export class GetAssetsApiService extends BaseService {
       items: items.map((item) => ({
         ...item,
         assetAttributes: item.assetAttributes.map((assetAttribute) => {
-          const attribute = attributes.find((item) => item.id);
+          const attribute = attributesResult.items.find((item) => item.id);
           if (attribute) {
             return {
               id: assetAttribute.id,
