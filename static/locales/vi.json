@@ -1,4 +1,7 @@
 {
+  "Error": {
+    "NotFoundAttributeException": "Không tìm thấy thuộc tính {{ name }}"
+  },
   "Meta": {
     "name": "Module tài sản",
     "description": "Module tài sản"

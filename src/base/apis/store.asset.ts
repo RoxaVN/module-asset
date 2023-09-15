@@ -1,11 +1,12 @@
 import {
   ApiSource,
+  ArrayMaxSize,
   ExactProps,
   IsOptional,
   Max,
   Min,
   MinLength,
-  TransformArray,
+  TransformJson,
   TransformNumber,
 } from '@roxavn/core/base';
 
@@ -22,9 +23,9 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
   @MinLength(1)
   public readonly storeId!: string;
 
-  @TransformArray()
-  @IsOptional()
-  public readonly attributeIds?: string[];
+  @ArrayMaxSize(100)
+  @TransformJson()
+  public readonly attributes: Array<{ name: string; value?: any }>;
 
   @Min(1)
   @TransformNumber()

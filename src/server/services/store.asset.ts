@@ -18,7 +18,7 @@ export class GetStoreAssetsApiService extends BaseService {
     return this.getAssetsApiService.handle({
       page: request.page,
       pageSize: request.pageSize,
-      attributeIds: request.attributeIds,
+      attributes: request.attributes,
       storeIds: [request.storeId],
     });
   }

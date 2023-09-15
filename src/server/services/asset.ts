@@ -12,7 +12,7 @@ import {
 import { In } from 'typeorm';
 
 import { serverModule } from '../module.js';
-import { assetApi } from '../../base/index.js';
+import { NotFoundAttributeException, assetApi } from '../../base/index.js';
 import { Asset } from '../entities/asset.entity.js';
 import { GetAttributesService } from './attribute.js';
 import { CloneAssetAttributesService } from './asset.attribute.js';
@@ -105,30 +105,31 @@ export class GetAssetsApiService extends BaseService {
     const page = request.page || 1;
     const pageSize = request.pageSize || 10;
 
+    const attributeNames = request.attributes.map((item) => item.name);
+    const attributes = await this.getAttributesService.handle({
+      names: attributeNames,
+    });
+
     const [items, totalItems] = await this.databaseService.manager
       .getRepository(Asset)
       .findAndCount({
         relations: ['assetAttributes'],
-        where: {
-          storeId: request.storeIds && In(request.storeIds),
-          assetAttributes: request.attributeIds
-            ? {
-                attributeId: In(request.attributeIds),
-              }
-            : undefined,
-        },
+        where: request.attributes.map((item) => {
+          const attribute = attributes.find((attr) => attr.name === item.name);
+          if (!attribute) {
+            throw new NotFoundAttributeException(item.name);
+          }
+          return {
+            storeId: request.storeIds && In(request.storeIds),
+            assetAttributes: {
+              attributeId: attribute.id,
+              [`value${attribute.type}`]: item.value,
+            },
+          };
+        }),
         take: pageSize,
         skip: (page - 1) * pageSize,
       });
-
-    const attributeIds = items
-      .map((item) =>
-        item.assetAttributes.map((assetAttribute) => assetAttribute.attributeId)
-      )
-      .flat();
-    const attributes = await this.getAttributesService.handle({
-      ids: attributeIds,
-    });
 
     return {
       items: items.map((item) => ({

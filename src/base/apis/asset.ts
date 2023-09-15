@@ -1,10 +1,12 @@
 import {
   ApiSource,
+  ArrayMaxSize,
   ExactProps,
   IsOptional,
   Max,
   Min,
   TransformArray,
+  TransformJson,
   TransformNumber,
 } from '@roxavn/core/base';
 
@@ -27,13 +29,14 @@ export interface AssetResponse {
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
 
 class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
+  @ArrayMaxSize(10)
   @TransformArray()
   @IsOptional()
   public readonly storeIds?: Array<string>;
 
-  @TransformArray()
-  @IsOptional()
-  public readonly attributeIds?: string[];
+  @ArrayMaxSize(100)
+  @TransformJson()
+  public readonly attributes: Array<{ name: string; value?: any }>;
 
   @Min(1)
   @TransformNumber()

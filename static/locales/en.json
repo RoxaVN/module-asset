@@ -1,4 +1,7 @@
 {
+  "Error": {
+    "NotFoundAttributeException": "Not found attribute {{ name }}"
+  },
   "Meta": {
     "name": "Asset module",
     "description": "Asset module"
