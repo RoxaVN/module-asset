@@ -9,6 +9,7 @@ import {
 import { serverModule } from '../module.js';
 import { AssetAttribute, Attribute } from '../entities/index.js';
 import { GetAttributesService } from './attribute.js';
+import { NotFoundAttributeException } from '../../base/index.js';
 
 @serverModule.injectable()
 export class CreateAssetAttributesService extends BaseService {
@@ -22,14 +23,12 @@ export class CreateAssetAttributesService extends BaseService {
 
   async handle(request: {
     assetId: string;
-    assetAttributes: Array<{
-      attributeName: string;
+    attributes: Array<{
+      name: string;
       value: any;
     }>;
   }) {
-    const attributeNames = request.assetAttributes.map(
-      (assetAttribute) => assetAttribute.attributeName
-    );
+    const attributeNames = request.attributes.map((attr) => attr.name);
     const attributes = await this.getAttributesService.handle({
       names: attributeNames,
     });
@@ -39,12 +38,15 @@ export class CreateAssetAttributesService extends BaseService {
       .insert()
       .into(AssetAttribute)
       .values(
-        request.assetAttributes.map((assetAttribute) => {
+        request.attributes.map((attr) => {
           const attribute = attributes.find(
-            (attribute) => attribute.name === assetAttribute.attributeName
-          ) as Attribute;
+            (attribute) => attribute.name === attr.name
+          );
+          if (!attribute) {
+            throw new NotFoundAttributeException(attr.name);
+          }
           return {
-            [`value${attribute.type}`]: assetAttribute.value,
+            [`value${attribute.type}`]: attr.value,
             assetId: request.assetId,
             attributeId: attribute.id,
           };
