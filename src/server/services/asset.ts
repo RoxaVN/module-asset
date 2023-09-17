@@ -27,7 +27,7 @@ export class CreateAssetService extends InjectDatabaseService {
     const asset = new Asset();
     Object.assign(asset, request);
 
-    await this.entityManager.save(asset);
+    await this.entityManager.getRepository(Asset).insert(asset);
     return { id: asset.id };
   }
 }

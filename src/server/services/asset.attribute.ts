@@ -34,9 +34,8 @@ export class CreateAssetAttributesService extends BaseService {
     });
 
     await this.databaseService.manager
-      .createQueryBuilder()
+      .createQueryBuilder(AssetAttribute, 'a')
       .insert()
-      .into(AssetAttribute)
       .values(
         request.attributes.map((attr) => {
           const attribute = attributesResult.items.find(
