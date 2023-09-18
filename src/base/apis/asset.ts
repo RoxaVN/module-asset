@@ -19,11 +19,7 @@ export interface AssetResponse {
   createdDate: Date;
   updatedDate: Date;
   storeId: string;
-  assetAttributes: Array<{
-    id: string;
-    name: string;
-    value: any;
-  }>;
+  attributes: Record<string, any>;
 }
 
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
@@ -34,9 +30,9 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
   @IsOptional()
   public readonly storeIds?: Array<string>;
 
-  @ArrayMaxSize(100)
+  @ArrayMaxSize(10)
   @TransformJson()
-  public readonly attributes: Array<{ name: string; value?: any }>;
+  public readonly filterAttributes: Array<{ name: string; value: any }>;
 
   @Min(1)
   @TransformNumber()

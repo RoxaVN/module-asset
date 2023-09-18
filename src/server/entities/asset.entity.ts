@@ -3,13 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { AssetAttribute } from './asset.attribute.entity.js';
 import { Store } from './store.entity.js';
 import { Unit } from './unit.entity.js';
 
@@ -21,14 +19,14 @@ export class Asset {
   @Column({ type: 'jsonb', nullable: true })
   metadata?: any;
 
+  @Column({ type: 'jsonb', default: {} })
+  attributes: Record<string, any>;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdDate: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedDate: Date;
-
-  @OneToMany(() => AssetAttribute, (assetAttributes) => assetAttributes.asset)
-  assetAttributes: Relation<AssetAttribute>[];
 
   @Column('uuid')
   storeId: string;

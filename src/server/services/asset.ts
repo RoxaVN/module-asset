@@ -9,18 +9,16 @@ import {
   InjectDatabaseService,
   inject,
 } from '@roxavn/core/server';
-import { In } from 'typeorm';
 
 import { serverModule } from '../module.js';
-import { NotFoundAttributeException, assetApi } from '../../base/index.js';
+import { assetApi } from '../../base/index.js';
 import { Asset } from '../entities/asset.entity.js';
-import { GetAllAttributesService } from './attribute.js';
-import { CloneAssetAttributesService } from './asset.attribute.js';
 
 @serverModule.injectable()
 export class CreateAssetService extends InjectDatabaseService {
   async handle(request: {
     storeId: string;
+    attributes: Record<string, any>;
     unitId?: string;
     unitcount?: number;
   }) {
@@ -55,9 +53,7 @@ export class UpdateAssetService extends InjectDatabaseService {
 @serverModule.injectable()
 export class SplitAssetService extends BaseService {
   constructor(
-    @inject(DatabaseService) private databaseService: DatabaseService,
-    @inject(CloneAssetAttributesService)
-    private cloneAssetAttributesService: CloneAssetAttributesService
+    @inject(DatabaseService) private databaseService: DatabaseService
   ) {
     super();
   }
@@ -76,27 +72,23 @@ export class SplitAssetService extends BaseService {
       throw new BadRequestException();
     }
     asset.unitCount -= request.splitAmount;
-    await this.databaseService.manager.save(asset);
+    await this.databaseService.manager.getRepository(Asset).save(asset);
 
     const newAsset = new Asset();
     newAsset.storeId = asset.storeId;
+    newAsset.attributes = asset.attributes;
     newAsset.unitId = asset.unitId;
     newAsset.unitCount = request.splitAmount;
-    await this.databaseService.manager.save(newAsset);
+    await this.databaseService.manager.getRepository(Asset).insert(newAsset);
 
-    await this.cloneAssetAttributesService.handle({
-      fromAssetId: asset.id,
-      toAssetId: newAsset.id,
-    });
+    return { id: newAsset.id };
   }
 }
 
 @serverModule.useApi(assetApi.getMany)
 export class GetAssetsApiService extends BaseService {
   constructor(
-    @inject(DatabaseService) private databaseService: DatabaseService,
-    @inject(GetAllAttributesService)
-    private getAttributesService: GetAllAttributesService
+    @inject(DatabaseService) private databaseService: DatabaseService
   ) {
     super();
   }
@@ -105,49 +97,26 @@ export class GetAssetsApiService extends BaseService {
     const page = request.page || 1;
     const pageSize = request.pageSize || 10;
 
-    const attributeNames = request.attributes.map((item) => item.name);
-    const attributesResult = await this.getAttributesService.handle({
-      names: attributeNames,
-    });
-
-    const [items, totalItems] = await this.databaseService.manager
-      .getRepository(Asset)
-      .findAndCount({
-        relations: ['assetAttributes'],
-        where: request.attributes.map((item) => {
-          const attribute = attributesResult.items.find(
-            (attr) => attr.name === item.name
-          );
-          if (!attribute) {
-            throw new NotFoundAttributeException(item.name);
-          }
-          return {
-            storeId: request.storeIds && In(request.storeIds),
-            assetAttributes: {
-              attributeId: attribute.id,
-              [`value${attribute.type}`]: item.value,
-            },
-          };
-        }),
-        take: pageSize,
-        skip: (page - 1) * pageSize,
+    let query = this.databaseService.manager.createQueryBuilder(Asset, 'asset');
+    if (request.storeIds) {
+      query = query.where('asset.storeId && :storeIds', {
+        storeIds: request.storeIds,
       });
+    }
+    for (const filter of request.filterAttributes) {
+      query = query.andWhere(`asset.attributes->>'${filter.name}' = :value`, {
+        value: filter.value,
+      });
+    }
+
+    const totalItems = await query.getCount();
+    const items = await query
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
 
     return {
-      items: items.map((item) => ({
-        ...item,
-        assetAttributes: item.assetAttributes.map((assetAttribute) => {
-          const attribute = attributesResult.items.find((item) => item.id);
-          if (attribute) {
-            return {
-              id: assetAttribute.id,
-              name: attribute.name,
-              value: assetAttribute[`value${attribute.type}`],
-            };
-          }
-          throw new NotFoundException();
-        }),
-      })),
+      items: items,
       pagination: { page, pageSize, totalItems },
     };
   }

@@ -23,9 +23,9 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
   @MinLength(1)
   public readonly storeId!: string;
 
-  @ArrayMaxSize(100)
+  @ArrayMaxSize(10)
   @TransformJson()
-  public readonly attributes: Array<{ name: string; value?: any }>;
+  public readonly filterAttributes: Array<{ name: string; value: any }>;
 
   @Min(1)
   @TransformNumber()

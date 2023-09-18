@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
-import { AssetAttribute } from './asset.attribute.entity.js';
 import { CategoryAttribute } from './category.attribute.entity.js';
 
 export type AttributeType = 'Varchar' | 'Int' | 'Date' | 'Decimal' | 'Text';
@@ -29,12 +28,6 @@ export class Attribute {
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdDate: Date;
-
-  @OneToMany(
-    () => AssetAttribute,
-    (assetAttributes) => assetAttributes.attribute
-  )
-  assetAttributes: Relation<AssetAttribute>[];
 
   @OneToMany(
     () => CategoryAttribute,

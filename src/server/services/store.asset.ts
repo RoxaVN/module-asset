@@ -18,8 +18,8 @@ export class GetStoreAssetsApiService extends BaseService {
     return this.getAssetsApiService.handle({
       page: request.page,
       pageSize: request.pageSize,
-      attributes: request.attributes,
       storeIds: [request.storeId],
+      filterAttributes: request.filterAttributes,
     });
   }
 }

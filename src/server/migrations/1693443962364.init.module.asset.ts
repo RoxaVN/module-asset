@@ -5,6 +5,47 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      CREATE TABLE "store" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "userId" uuid,
+        "name" text NOT NULL,
+        "type" text NOT NULL DEFAULT 'public',
+        "metadata" jsonb,
+        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        CONSTRAINT "PK_f3172007d4de5ae8e7692759d79" PRIMARY KEY ("id")
+      )
+      `);
+    await queryRunner.query(`
+      CREATE INDEX "IDX_3f82dbf41ae837b8aa0a27d29c" ON "store" ("userId")
+      `);
+    await queryRunner.query(`
+      CREATE TABLE "unit" (
+        "id" BIGSERIAL NOT NULL,
+        "name" character varying(256) NOT NULL,
+        "metadata" jsonb,
+        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        CONSTRAINT "PK_4252c4be609041e559f0c80f58a" PRIMARY KEY ("id")
+      )
+      `);
+    await queryRunner.query(`
+      CREATE UNIQUE INDEX "IDX_5618100486bb99d78de022e582" ON "unit" ("name")
+      `);
+    await queryRunner.query(`
+      CREATE TABLE "asset" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "metadata" jsonb,
+        "attributes" jsonb NOT NULL DEFAULT '{}',
+        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "storeId" uuid NOT NULL,
+        "unitCount" double precision NOT NULL DEFAULT '1',
+        "unitId" bigint,
+        CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id")
+      )
+      `);
+    await queryRunner.query(`
       CREATE TABLE "category" (
         "id" BIGSERIAL NOT NULL,
         "name" character varying(256) NOT NULL,
@@ -50,59 +91,12 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
       CREATE UNIQUE INDEX "IDX_350fb4f7eb87e4c7d35c97a982" ON "attribute" ("name")
       `);
     await queryRunner.query(`
-      CREATE TABLE "asset_attribute" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "assetId" uuid NOT NULL,
-        "attributeId" bigint NOT NULL,
-        "metadata" jsonb,
-        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "valueDate" TIMESTAMP WITH TIME ZONE,
-        "valueInt" integer,
-        "valueDecimal" numeric(12, 4),
-        "valueText" text,
-        "valueVarchar" character varying(256),
-        CONSTRAINT "PK_be7ea6150ce31f063a128f02ab1" PRIMARY KEY ("id")
-      )
+      ALTER TABLE "asset"
+      ADD CONSTRAINT "FK_d83c8e0865e2b3405ab34efbb8b" FOREIGN KEY ("storeId") REFERENCES "store"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
       `);
     await queryRunner.query(`
-      CREATE TABLE "store" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "userId" uuid,
-        "name" text NOT NULL,
-        "type" text NOT NULL DEFAULT 'public',
-        "metadata" jsonb,
-        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_f3172007d4de5ae8e7692759d79" PRIMARY KEY ("id")
-      )
-      `);
-    await queryRunner.query(`
-      CREATE INDEX "IDX_3f82dbf41ae837b8aa0a27d29c" ON "store" ("userId")
-      `);
-    await queryRunner.query(`
-      CREATE TABLE "unit" (
-        "id" BIGSERIAL NOT NULL,
-        "name" character varying(256) NOT NULL,
-        "metadata" jsonb,
-        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_4252c4be609041e559f0c80f58a" PRIMARY KEY ("id")
-      )
-      `);
-    await queryRunner.query(`
-      CREATE UNIQUE INDEX "IDX_5618100486bb99d78de022e582" ON "unit" ("name")
-      `);
-    await queryRunner.query(`
-      CREATE TABLE "asset" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "metadata" jsonb,
-        "createdDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updatedDate" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "storeId" uuid NOT NULL,
-        "unitCount" double precision NOT NULL DEFAULT '1',
-        "unitId" bigint,
-        CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id")
-      )
+      ALTER TABLE "asset"
+      ADD CONSTRAINT "FK_ac31ca43467d1081617c21dda67" FOREIGN KEY ("unitId") REFERENCES "unit"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
       `);
     await queryRunner.query(`
       ALTER TABLE "category_attribute"
@@ -112,37 +106,9 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
       ALTER TABLE "category_attribute"
       ADD CONSTRAINT "FK_02d2d1bd2127e4d54302549fefd" FOREIGN KEY ("attributeId") REFERENCES "attribute"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
       `);
-    await queryRunner.query(`
-      ALTER TABLE "asset_attribute"
-      ADD CONSTRAINT "FK_653e8a89fae66b121b75736f8e8" FOREIGN KEY ("assetId") REFERENCES "asset"("id") ON DELETE CASCADE ON UPDATE NO ACTION
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset_attribute"
-      ADD CONSTRAINT "FK_8b114857c428382c666c411f76b" FOREIGN KEY ("attributeId") REFERENCES "attribute"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset"
-      ADD CONSTRAINT "FK_d83c8e0865e2b3405ab34efbb8b" FOREIGN KEY ("storeId") REFERENCES "store"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset"
-      ADD CONSTRAINT "FK_ac31ca43467d1081617c21dda67" FOREIGN KEY ("unitId") REFERENCES "unit"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-      `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
-      ALTER TABLE "asset" DROP CONSTRAINT "FK_ac31ca43467d1081617c21dda67"
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset" DROP CONSTRAINT "FK_d83c8e0865e2b3405ab34efbb8b"
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset_attribute" DROP CONSTRAINT "FK_8b114857c428382c666c411f76b"
-      `);
-    await queryRunner.query(`
-      ALTER TABLE "asset_attribute" DROP CONSTRAINT "FK_653e8a89fae66b121b75736f8e8"
-      `);
     await queryRunner.query(`
       ALTER TABLE "category_attribute" DROP CONSTRAINT "FK_02d2d1bd2127e4d54302549fefd"
       `);
@@ -150,22 +116,10 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
       ALTER TABLE "category_attribute" DROP CONSTRAINT "FK_6ae9fd1960af2eb3b290036c1c8"
       `);
     await queryRunner.query(`
-      DROP TABLE "asset"
+      ALTER TABLE "asset" DROP CONSTRAINT "FK_ac31ca43467d1081617c21dda67"
       `);
     await queryRunner.query(`
-      DROP INDEX "public"."IDX_5618100486bb99d78de022e582"
-      `);
-    await queryRunner.query(`
-      DROP TABLE "unit"
-      `);
-    await queryRunner.query(`
-      DROP INDEX "public"."IDX_3f82dbf41ae837b8aa0a27d29c"
-      `);
-    await queryRunner.query(`
-      DROP TABLE "store"
-      `);
-    await queryRunner.query(`
-      DROP TABLE "asset_attribute"
+      ALTER TABLE "asset" DROP CONSTRAINT "FK_d83c8e0865e2b3405ab34efbb8b"
       `);
     await queryRunner.query(`
       DROP INDEX "public"."IDX_350fb4f7eb87e4c7d35c97a982"
@@ -187,6 +141,21 @@ export class InitModuleAsset1693443962364 implements MigrationInterface {
       `);
     await queryRunner.query(`
       DROP TABLE "category"
+      `);
+    await queryRunner.query(`
+      DROP TABLE "asset"
+      `);
+    await queryRunner.query(`
+      DROP INDEX "public"."IDX_5618100486bb99d78de022e582"
+      `);
+    await queryRunner.query(`
+      DROP TABLE "unit"
+      `);
+    await queryRunner.query(`
+      DROP INDEX "public"."IDX_3f82dbf41ae837b8aa0a27d29c"
+      `);
+    await queryRunner.query(`
+      DROP TABLE "store"
       `);
   }
 }
