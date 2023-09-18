@@ -104,9 +104,12 @@ export class GetAssetsApiService extends BaseService {
       });
     }
     for (const filter of request.filterAttributes) {
-      query = query.andWhere(`asset.attributes->>'${filter.name}' = :value`, {
-        value: filter.value,
-      });
+      query = query.andWhere(
+        `asset.attributes->>'${filter.name}' = :${filter.name}`,
+        {
+          [filter.name]: filter.value,
+        }
+      );
     }
 
     const totalItems = await query.getCount();
