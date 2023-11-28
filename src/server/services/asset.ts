@@ -97,7 +97,7 @@ export class GetAssetsApiService extends InjectDatabaseService {
         storeIds: request.storeIds,
       });
     }
-    request.attributeFilters.map((filter, index) => {
+    request.attributeFilters?.map((filter, index) => {
       const paramName = `${filter.name}${index}`;
       let where = `asset.attributes->>'${filter.name}'`;
       switch (filter.operator) {

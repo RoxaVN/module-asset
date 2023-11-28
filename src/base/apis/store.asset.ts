@@ -25,7 +25,8 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
 
   @ArrayMaxSize(10)
   @TransformJson()
-  public readonly attributeFilters: Array<AttributeFilterItem>;
+  @IsOptional()
+  public readonly attributeFilters?: Array<AttributeFilterItem>;
 
   @Min(1)
   @TransformNumber()
