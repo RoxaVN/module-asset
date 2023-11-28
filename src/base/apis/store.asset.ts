@@ -12,7 +12,7 @@ import {
 
 import { baseModule } from '../module.js';
 import { permissions, scopes } from '../access.js';
-import { AssetResponse } from './asset.js';
+import { AssetResponse, AttributeFilterItem } from './asset.js';
 
 const storeAssetSource = new ApiSource<AssetResponse>(
   [scopes.Store, scopes.Asset],
@@ -25,7 +25,7 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
 
   @ArrayMaxSize(10)
   @TransformJson()
-  public readonly attributeFilters: Array<{ name: string; value: any }>;
+  public readonly attributeFilters: Array<AttributeFilterItem>;
 
   @Min(1)
   @TransformNumber()

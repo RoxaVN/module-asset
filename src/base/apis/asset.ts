@@ -22,6 +22,17 @@ export interface AssetResponse {
   attributes: Record<string, any>;
 }
 
+export interface AttributeFilterItem {
+  name: string;
+  value: any;
+  operator?:
+    | 'LessThan'
+    | 'LessThanOrEqual'
+    | 'MoreThan'
+    | 'MoreThanOrEqual'
+    | 'In';
+}
+
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
 
 class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
@@ -32,7 +43,7 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
 
   @ArrayMaxSize(10)
   @TransformJson()
-  public readonly attributeFilters: Array<{ name: string; value: any }>;
+  public readonly attributeFilters: Array<AttributeFilterItem>;
 
   @Min(1)
   @TransformNumber()

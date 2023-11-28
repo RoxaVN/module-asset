@@ -86,30 +86,43 @@ export class SplitAssetService extends BaseService {
 }
 
 @serverModule.useApi(assetApi.getMany)
-export class GetAssetsApiService extends BaseService {
-  constructor(
-    @inject(DatabaseService) private databaseService: DatabaseService
-  ) {
-    super();
-  }
-
+export class GetAssetsApiService extends InjectDatabaseService {
   async handle(request: InferApiRequest<typeof assetApi.getMany>) {
     const page = request.page || 1;
     const pageSize = request.pageSize || 10;
 
     let query = this.databaseService.manager.createQueryBuilder(Asset, 'asset');
     if (request.storeIds) {
-      query = query.where('asset.storeId && :storeIds', {
+      query = query.where('asset.storeId IN (:...storeIds)', {
         storeIds: request.storeIds,
       });
     }
     request.attributeFilters.map((filter, index) => {
-      query = query.andWhere(
-        `asset.attributes->>'${filter.name}' = :${filter.name}${index}`,
-        {
-          [`${filter.name}${index}`]: filter.value,
-        }
-      );
+      const paramName = `${filter.name}${index}`;
+      let where = `asset.attributes->>'${filter.name}'`;
+      switch (filter.operator) {
+        case 'In':
+          where += ` IN (:...${paramName})`;
+          break;
+        case 'LessThan':
+          where += ` < :${paramName}`;
+          break;
+        case 'LessThanOrEqual':
+          where += ` <= :${paramName}`;
+          break;
+        case 'MoreThan':
+          where += ` > :${paramName}`;
+          break;
+        case 'MoreThanOrEqual':
+          where += ` >= :${paramName}`;
+          break;
+        default:
+          where += ` = :${paramName}`;
+      }
+
+      query = query.andWhere(where, {
+        [paramName]: filter.value,
+      });
     });
 
     const totalItems = await query.getCount();
