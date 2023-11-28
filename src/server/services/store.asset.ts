@@ -19,7 +19,7 @@ export class GetStoreAssetsApiService extends BaseService {
       page: request.page,
       pageSize: request.pageSize,
       storeIds: [request.storeId],
-      filterAttributes: request.filterAttributes,
+      attributeFilters: request.attributeFilters,
     });
   }
 }

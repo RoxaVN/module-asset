@@ -32,7 +32,7 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
 
   @ArrayMaxSize(10)
   @TransformJson()
-  public readonly filterAttributes: Array<{ name: string; value: any }>;
+  public readonly attributeFilters: Array<{ name: string; value: any }>;
 
   @Min(1)
   @TransformNumber()

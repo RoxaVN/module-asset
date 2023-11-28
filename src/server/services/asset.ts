@@ -103,14 +103,14 @@ export class GetAssetsApiService extends BaseService {
         storeIds: request.storeIds,
       });
     }
-    for (const filter of request.filterAttributes) {
+    request.attributeFilters.map((filter, index) => {
       query = query.andWhere(
-        `asset.attributes->>'${filter.name}' = :${filter.name}`,
+        `asset.attributes->>'${filter.name}' = :${filter.name}${index}`,
         {
-          [filter.name]: filter.value,
+          [`${filter.name}${index}`]: filter.value,
         }
       );
-    }
+    });
 
     const totalItems = await query.getCount();
     const items = await query
