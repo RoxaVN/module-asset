@@ -33,6 +33,11 @@ export interface AttributeFilterItem {
     | 'In';
 }
 
+export interface OrderByItem {
+  attribute: string;
+  direction: 'ASC' | 'DESC';
+}
+
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
 
 class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
@@ -56,6 +61,10 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
   @TransformNumber()
   @IsOptional()
   public readonly pageSize?: number;
+
+  @TransformJson()
+  @IsOptional()
+  public readonly orderBy?: Array<OrderByItem>;
 }
 
 export const assetApi = {

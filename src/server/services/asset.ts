@@ -126,6 +126,17 @@ export class GetAssetsApiService extends InjectDatabaseService {
     });
 
     const totalItems = await query.getCount();
+
+    if (request.orderBy) {
+      query = query.orderBy(
+        Object.fromEntries(
+          request.orderBy.map((item) => [
+            `asset.attributes->>'${item.attribute}'`,
+            item.direction,
+          ])
+        )
+      );
+    }
     const items = await query
       .skip((page - 1) * pageSize)
       .take(pageSize)
