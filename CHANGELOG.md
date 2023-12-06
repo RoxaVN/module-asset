@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/RoxaVN/roxavn/compare/v0.1.1...v0.1.2) (2023-12-06)
+
+### Features
+
+- add AttributeFilterItem ([57246ba](https://github.com/RoxaVN/roxavn/commit/57246ba5a00ed59a95280357a24c9103c44bab9e))
+- add orderBy to GetAssetsRequest ([f1f31b8](https://github.com/RoxaVN/roxavn/commit/f1f31b826ab58d7b057ea822b162f5dc999979fe))
+- make attributeFilters be optional ([9a2f7a8](https://github.com/RoxaVN/roxavn/commit/9a2f7a898d8438161c7cfc59884644de2af668c5))
+
+### Bug Fixes
+
+- not unique parameters in where expression ([1a3a3b7](https://github.com/RoxaVN/roxavn/commit/1a3a3b780f4cc230b50e157cb2105745f3c32784))
+
 ### [0.1.1](https://github.com/RoxaVN/roxavn/compare/v0.1.0...v0.1.1) (2023-11-23)
 
 ### Features
