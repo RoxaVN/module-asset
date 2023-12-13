@@ -37,6 +37,7 @@ export class UpdateAssetService extends InjectDatabaseService {
     storeId?: string;
     unitcount?: number;
     metadata?: Record<string, any>;
+    attributes?: Record<string, any>;
   }) {
     await this.entityManager.getRepository(Asset).update(
       { id: request.assetId },
@@ -44,6 +45,7 @@ export class UpdateAssetService extends InjectDatabaseService {
         storeId: request.storeId,
         unitCount: request.unitcount,
         metadata: request.metadata,
+        attributes: request.attributes,
       }
     );
     return {};
