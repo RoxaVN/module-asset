@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/RoxaVN/roxavn/compare/v0.1.2...v0.1.3) (2023-12-13)
+
+### Features
+
+- add attributes param to UpdateAssetService ([bf1ec10](https://github.com/RoxaVN/roxavn/commit/bf1ec100102246c0f708d304bdc9c5f5b1d9170f))
+
 ### [0.1.2](https://github.com/RoxaVN/roxavn/compare/v0.1.1...v0.1.2) (2023-12-06)
 
 ### Features
