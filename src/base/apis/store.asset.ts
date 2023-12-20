@@ -1,6 +1,7 @@
 import {
   ApiSource,
   ArrayMaxSize,
+  type AttributeFilters,
   ExactProps,
   IsOptional,
   Max,
@@ -12,7 +13,7 @@ import {
 
 import { baseModule } from '../module.js';
 import { permissions, scopes } from '../access.js';
-import { AssetResponse, AttributeFilterItem } from './asset.js';
+import { AssetResponse } from './asset.js';
 
 const storeAssetSource = new ApiSource<AssetResponse>(
   [scopes.Store, scopes.Asset],
@@ -26,7 +27,7 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
   @ArrayMaxSize(10)
   @TransformJson()
   @IsOptional()
-  public readonly attributeFilters?: Array<AttributeFilterItem>;
+  public readonly attributeFilters?: AttributeFilters;
 
   @Min(1)
   @TransformNumber()

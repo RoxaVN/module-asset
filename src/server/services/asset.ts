@@ -8,6 +8,7 @@ import {
   DatabaseService,
   InjectDatabaseService,
   inject,
+  databaseUtils,
 } from '@roxavn/core/server';
 
 import { serverModule } from '../module.js';
@@ -99,33 +100,14 @@ export class GetAssetsApiService extends InjectDatabaseService {
         storeIds: request.storeIds,
       });
     }
-    request.attributeFilters?.map((filter, index) => {
-      const paramName = `${filter.name}${index}`;
-      let where = `asset.attributes->>'${filter.name}'`;
-      switch (filter.operator) {
-        case 'In':
-          where += ` IN (:...${paramName})`;
-          break;
-        case 'LessThan':
-          where += ` < :${paramName}`;
-          break;
-        case 'LessThanOrEqual':
-          where += ` <= :${paramName}`;
-          break;
-        case 'MoreThan':
-          where += ` > :${paramName}`;
-          break;
-        case 'MoreThanOrEqual':
-          where += ` >= :${paramName}`;
-          break;
-        default:
-          where += ` = :${paramName}`;
-      }
-
-      query = query.andWhere(where, {
-        [paramName]: filter.value,
-      });
-    });
+    if (request.attributeFilters) {
+      query = query.andWhere(
+        databaseUtils.makeWhere(
+          request.attributeFilters,
+          (field) => `asset.attributes->>'${field}'`
+        )
+      );
+    }
 
     const totalItems = await query.getCount();
 

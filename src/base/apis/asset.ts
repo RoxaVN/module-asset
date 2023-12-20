@@ -1,6 +1,7 @@
 import {
   ApiSource,
   ArrayMaxSize,
+  type AttributeFilters,
   ExactProps,
   IsOptional,
   Max,
@@ -22,17 +23,6 @@ export interface AssetResponse {
   attributes: Record<string, any>;
 }
 
-export interface AttributeFilterItem {
-  name: string;
-  value: any;
-  operator?:
-    | 'LessThan'
-    | 'LessThanOrEqual'
-    | 'MoreThan'
-    | 'MoreThanOrEqual'
-    | 'In';
-}
-
 export interface OrderByItem {
   attribute: string;
   direction: 'ASC' | 'DESC';
@@ -49,7 +39,7 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
   @ArrayMaxSize(10)
   @TransformJson()
   @IsOptional()
-  public readonly attributeFilters?: Array<AttributeFilterItem>;
+  public readonly attributeFilters?: AttributeFilters;
 
   @Min(1)
   @TransformNumber()
