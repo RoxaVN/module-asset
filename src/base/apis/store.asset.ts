@@ -2,13 +2,10 @@ import {
   ApiSource,
   ArrayMaxSize,
   type AttributeFilters,
-  ExactProps,
   IsOptional,
-  Max,
-  Min,
   MinLength,
   TransformJson,
-  TransformNumber,
+  PaginationRequest,
 } from '@roxavn/core/base';
 
 import { baseModule } from '../module.js';
@@ -20,7 +17,7 @@ const storeAssetSource = new ApiSource<AssetResponse>(
   baseModule
 );
 
-class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
+class GetStoreAssetsRequest extends PaginationRequest<GetStoreAssetsRequest> {
   @MinLength(1)
   public readonly storeId!: string;
 
@@ -28,17 +25,6 @@ class GetStoreAssetsRequest extends ExactProps<GetStoreAssetsRequest> {
   @TransformJson()
   @IsOptional()
   public readonly attributeFilters?: AttributeFilters;
-
-  @Min(1)
-  @TransformNumber()
-  @IsOptional()
-  public readonly page?: number;
-
-  @Min(1)
-  @Max(100)
-  @TransformNumber()
-  @IsOptional()
-  public readonly pageSize?: number;
 }
 
 export const storeAssetApi = {

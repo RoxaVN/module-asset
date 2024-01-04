@@ -1,11 +1,8 @@
 import {
   ApiSource,
-  ExactProps,
   IsOptional,
-  Max,
-  Min,
   MinLength,
-  TransformNumber,
+  PaginationRequest,
 } from '@roxavn/core/base';
 
 import { baseModule } from '../module.js';
@@ -21,21 +18,10 @@ const storeSource = new ApiSource<{
   updatedDate: Date;
 }>([scopes.Store], baseModule);
 
-class GetStoresRequest extends ExactProps<GetStoresRequest> {
+class GetStoresRequest extends PaginationRequest<GetStoresRequest> {
   @MinLength(1)
   @IsOptional()
   public readonly userId?: string;
-
-  @Min(1)
-  @TransformNumber()
-  @IsOptional()
-  public readonly page?: number;
-
-  @Min(1)
-  @Max(100)
-  @TransformNumber()
-  @IsOptional()
-  public readonly pageSize?: number;
 }
 
 export const storeApi = {

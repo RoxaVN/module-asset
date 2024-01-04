@@ -2,13 +2,10 @@ import {
   ApiSource,
   ArrayMaxSize,
   type AttributeFilters,
-  ExactProps,
   IsOptional,
-  Max,
-  Min,
   TransformArray,
   TransformJson,
-  TransformNumber,
+  PaginationRequest,
 } from '@roxavn/core/base';
 
 import { baseModule } from '../module.js';
@@ -30,7 +27,7 @@ export interface OrderByItem {
 
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
 
-class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
+class GetAssetsRequest extends PaginationRequest<GetAssetsRequest> {
   @ArrayMaxSize(10)
   @TransformArray()
   @IsOptional()
@@ -40,17 +37,6 @@ class GetAssetsRequest extends ExactProps<GetAssetsRequest> {
   @TransformJson()
   @IsOptional()
   public readonly attributeFilters?: AttributeFilters;
-
-  @Min(1)
-  @TransformNumber()
-  @IsOptional()
-  public readonly page?: number;
-
-  @Min(1)
-  @Max(100)
-  @TransformNumber()
-  @IsOptional()
-  public readonly pageSize?: number;
 
   @TransformJson()
   @IsOptional()
