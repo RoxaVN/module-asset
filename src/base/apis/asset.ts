@@ -6,6 +6,7 @@ import {
   TransformArray,
   TransformJson,
   PaginationRequest,
+  type OrderBy,
 } from '@roxavn/core/base';
 
 import { baseModule } from '../module.js';
@@ -18,11 +19,6 @@ export interface AssetResponse {
   updatedDate: Date;
   storeId: string;
   attributes: Record<string, any>;
-}
-
-export interface OrderByItem {
-  attribute: string;
-  direction: 'ASC' | 'DESC';
 }
 
 const assetSource = new ApiSource<AssetResponse>([scopes.Asset], baseModule);
@@ -40,7 +36,7 @@ class GetAssetsRequest extends PaginationRequest<GetAssetsRequest> {
 
   @TransformJson()
   @IsOptional()
-  public readonly orderBy?: Array<OrderByItem>;
+  public readonly orderBy?: OrderBy;
 }
 
 export const assetApi = {
