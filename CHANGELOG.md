@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/RoxaVN/roxavn/compare/v0.1.3...v0.1.4) (2024-01-07)
+
+### Features
+
+- use AttributeFilters ([72b87d5](https://github.com/RoxaVN/roxavn/commit/72b87d5e73df2514616e60608d5ecff5c3907c45))
+- use OrderBy ([bfa5181](https://github.com/RoxaVN/roxavn/commit/bfa518122ce9f870c2da5fb826d5a86d1d978a50))
+- use PaginationRequest ([02fdd3d](https://github.com/RoxaVN/roxavn/commit/02fdd3d09dc7c23d7ade41cdadf1956aad431cd1))
+
 ### [0.1.3](https://github.com/RoxaVN/roxavn/compare/v0.1.2...v0.1.3) (2023-12-13)
 
 ### Features
